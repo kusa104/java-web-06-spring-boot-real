@@ -17,7 +17,7 @@
 		SELECT 
 			BOARD_SEQ, BOARD_TYPE, TITLE, CONTENTS, USER_NAME, REG_DATE 
 		FROM T_BOARD
-		WHERE BOARD_SEQ = #boardSeq#
+		WHERE BOARD_SEQ = #{boardSeq}
 	</select>	
 	
 	<!-- 게시물 등록 쿼리 -->
@@ -32,10 +32,10 @@
 		)
 		VALUES
 		(
-			#boardType#,
-			#title#,
-			#contents#,
-			#userName#,
+			#{boardType},
+			#{title},
+			#{contents},
+			#{userName},
 			NOW()	
 		)
 	</insert>
@@ -44,17 +44,17 @@
 	<update id="updateBoard" parameterType="com.example.mapper.Board">
 		UPDATE T_BOARD
 		SET
-			BOARD_TYPE = #boardType#,
-			TITLE = #title#,
-			CONTENTS = #contents#,
-			USER_NAME = #userName#
-		WHERE BOARD_SEQ = #boardSeq#
+			BOARD_TYPE = #{boardType},
+			TITLE = #{title},
+			CONTENTS = #{contents},
+			USER_NAME = #{userName}
+		WHERE BOARD_SEQ = #{boardSeq}
 	</update>	
 	
 	<!-- 게시물 삭제 쿼리 -->
 	<delete id="deleteBoard" parameterType="int">
 		DELETE FROM T_BOARD
-		WHERE BOARD_SEQ = #boardSeq#
+		WHERE BOARD_SEQ = #{boardSeq}
 	</delete>
 	
 </mapper>

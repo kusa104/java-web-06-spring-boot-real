@@ -1,5 +1,8 @@
 package com.example.mapper;
 
+import lombok.Data;
+
+@Data
 public class Board {
 	
 	private int boardSeq;
@@ -8,43 +11,5 @@ public class Board {
 	private String contents;
 	private String regDate;
 	private String userName; // 회원 이름
-	
-	public String getBoardType() {
-		return boardType;
-	}
-	public void setBoardType(String boardType) {
-		this.boardType = boardType;
-	}
-	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
-	}
-	public String getRegDate() {
-		return regDate;
-	}
-	public void setRegDate(String regDate) {
-		this.regDate = regDate;
-	}
-	
-	public int getBoardSeq() {
-		return boardSeq;
-	}
-	public void setBoardSeq(int boardSeq) {
-		this.boardSeq = boardSeq;
-	}
-	public String getContents() {
-		return contents;
-	}
-	public void setContents(String contents) {
-		this.contents = contents;
-	}
-	public String getUserName() {
-		return userName;
-	}
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
 	
 }
