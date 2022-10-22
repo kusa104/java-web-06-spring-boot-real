@@ -9,7 +9,6 @@
 <body>
 	<div class="container">
 		<div class="card" style="width: 18rem;">
-		  <img src="..." class="card-img-top" alt="...">
 		  <div class="card-body">
 		    <h5 class="card-title">[[${board.title}]]</h5>
 		    <h5 class="card-title">회원 이름 : [[${board.userName}]]</h5>
@@ -27,7 +26,7 @@
 	function handleDelete() {
 		if (confirm('정말 삭제하시겠습니까?')) {
 			$.ajax({
-				url: '/board/delete',
+				url: '/board/delete2',
 				type: 'post',
 				// 파라메터
 				data: {
@@ -35,10 +34,12 @@
 				},
 				// 성공콜백
 				success: function(data) {
+					console.log(data);
 					alert('게시글이 삭제되었습니다.');
 					location.href = '/board';
 				},
-				error: function() {
+				error: function(data) {
+					console.log(data);
 					alert('게시글 삭제가 실패하였습니다.');
 				}
 			});

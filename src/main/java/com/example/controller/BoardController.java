@@ -7,13 +7,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.example.exception.DefaultException;
+import com.example.controller.form.BoardSaveForm;
 import com.example.mapper.Board;
 import com.example.service.BoardService;
 
@@ -68,6 +71,16 @@ public class BoardController {
 	}
 	
 	/**
+	 * 게시물 등록 화면
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/form-body")
+	public String formBody(Model model) {
+		return "/board/form-body";
+	}
+	
+	/**
 	 * 게시물 수정 화면
 	 * @param model
 	 * @param boardSeq
@@ -89,15 +102,25 @@ public class BoardController {
 	 * @return
 	 */
 	@PostMapping("/save")
-	public String save(Board board) {
-		Assert.hasLength(board.getUserName(), "회원 이름을 입력해주세요.");
-		Assert.hasLength(board.getTitle(), "제목을 입력해주세요.");
-		Assert.hasLength(board.getBoardType(), "종류를 선택해주세요.");
-		Assert.hasLength(board.getContents(), "내용을 입력해주세요.");
-		
-		if (board.getUserName().equals("test")) {
-			throw new DefaultException("Test 회원 이름을 입력이 불가능 합니다.");
+	public String save(@Validated BoardSaveForm form) {
+		Board selectBoard = null;
+		// 게시글 수정으로 요청인경우
+		if (form.getBoardSeq() > 0) {
+			selectBoard = boardService.selectBoard(form.getBoardSeq());
 		}
+		// 수정인 경우 업데이트
+		if (selectBoard != null) {
+			boardService.updateBoard(form);
+		} else {
+			boardService.insertBoard(form);
+		}
+		// 게시물 목록 화면으로 URL 리다렉트
+		return "redirect:/board";
+	}
+	
+	@PostMapping("/save-body")
+	@ResponseBody
+	public HttpEntity<Boolean> saveBody(@Validated @RequestBody BoardSaveForm board) {
 		Board selectBoard = null;
 		// 게시글 수정으로 요청인경우
 		if (board.getBoardSeq() > 0) {
@@ -109,8 +132,7 @@ public class BoardController {
 		} else {
 			boardService.insertBoard(board);
 		}
-		// 게시물 목록 화면으로 URL 리다렉트
-		return "redirect:/board";
+		return new ResponseEntity<Boolean>(HttpStatus.OK);
 	}
 	
 	@PostMapping("/delete")

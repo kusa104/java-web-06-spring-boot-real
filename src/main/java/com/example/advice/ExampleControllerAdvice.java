@@ -1,5 +1,7 @@
 package com.example.advice;
 
+import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -20,11 +22,21 @@ public class ExampleControllerAdvice {
 	@ExceptionHandler(Exception.class)
 	public ModelAndView handleException(Exception e) {
 		log.error("handleException", e);
-		
-		
-		
-		
 		return handle(e);
+	}
+	
+	/**
+	 * BindException 발생에 예외처리
+	 * @param e
+	 * @return
+	 */
+	@ExceptionHandler(BindException.class)
+	public ModelAndView handleBindException(BindException e) {
+		log.error("handleBindException", e);
+		ModelAndView view = new ModelAndView("/error/message.html");
+		FieldError fieldError = e.getFieldError();
+		view.addObject("message", fieldError.getDefaultMessage());		
+		return view;
 	}
 	
 	/**
