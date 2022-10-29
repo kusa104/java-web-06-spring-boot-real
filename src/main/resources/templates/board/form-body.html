@@ -8,7 +8,7 @@
   </head>
   <body>
 	<div class="container">
-		<form action="/board/save" method="post">
+		<form id="board-save-form" action="/board/save" method="post">
 			<input type="hidden" name="boardSeq" th:if="${board != null}" 
 				th:value="${board.boardSeq}"/>
 			<div class="row mb-3">
@@ -55,34 +55,44 @@
 			<button type="submit" class="btn btn-primary">저장</button>
 		</form>
 	</div>
-<script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
-	<script th:inline="javascript">
+	<script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+	<script>
 	$(function() {
-		var $form = $('form');
+		// form을 핸들링하기 위해 form을 가져옴.
+		var $form = $('#board-save-form');
+		// form에서 submit이 발생한경우 핸들링.
+		
 		$form.submit(function() {
+			var data = {
+				boardSeq: $form.find('input[name=boardSeq]').val(),
+				boardType: $form.find('input[name=boardType]:checked').val(),
+				title: $form.find('input[name=title]').val(),
+				contents: $form.find('textarea[name=contents]').val(),
+				userName: $form.find('input[name=userName]').val(),
+			};
+			
+			console.log('data', data);
+			
+			var jsonValue = JSON.stringify(data);
+			
+			console.log('jsonValue', jsonValue);			
 			$.ajax({
 				url: '/board/save-body',
 				type: 'post',
-				// 파라메터
-				data: JSON.stringify({
-					boardSeq: $form.find('input[name=boardSeq]').val(),
-					boardType: $form.find('input[name=boardType]:checked').val(),
-					title: $form.find('input[name=title]').val(),
-					contents: $form.find('textarea[name=contents]').val(),
-					userName: $form.find('input[name=userName]').val(),
-				}),
+				data: jsonValue,
 				contentType: 'application/json',
-				// 성공콜백
-				success: function(data) {
-					console.log(data);
+				success: function(boardSeq) {
+					location.href = '/board/' + boardSeq;
 				},
 				error: function(data) {
 					console.log(data);
+					alert('오류가 발생했습니다.');
 				}
 			});
+			// 페이지가 전환되지 않게 방지
 			return false;
 		});
-	})
-	</script>	
+	});
+	</script>
   </body>
 </html>

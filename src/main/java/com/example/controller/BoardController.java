@@ -80,6 +80,8 @@ public class BoardController {
 		return "/board/form-body";
 	}
 	
+	
+	
 	/**
 	 * 게시물 수정 화면
 	 * @param model
@@ -118,24 +120,31 @@ public class BoardController {
 		return "redirect:/board";
 	}
 	
+	/**
+	 * 게시물 등록/저장 요청 처리 (Client body에 json으로 받기)
+	 * @param model
+	 * @return
+	 */
 	@PostMapping("/save-body")
 	@ResponseBody
-	public HttpEntity<Boolean> saveBody(@Validated @RequestBody BoardSaveForm board) {
+	public HttpEntity<Integer> saveBody(@Validated @RequestBody BoardSaveForm form) {
 		Board selectBoard = null;
 		// 게시글 수정으로 요청인경우
-		if (board.getBoardSeq() > 0) {
-			selectBoard = boardService.selectBoard(board.getBoardSeq());
+		if (form.getBoardSeq() > 0) {
+			selectBoard = boardService.selectBoard(form.getBoardSeq());
 		}
 		// 수정인 경우 업데이트
 		if (selectBoard != null) {
-			boardService.updateBoard(board);
+			boardService.updateBoard(form);
 		} else {
-			boardService.insertBoard(board);
+			boardService.insertBoard(form);
 		}
-		return new ResponseEntity<Boolean>(HttpStatus.OK);
+		// 게시물 목록 화면으로 URL 리다렉트
+		return new ResponseEntity<Integer>(form.getBoardSeq(), HttpStatus.OK);
 	}
 	
 	@PostMapping("/delete")
+	@ResponseBody
 	public HttpEntity<Boolean> delete(@RequestParam int boardSeq) {
 		// 데이터 조회
 		Board board = boardService.selectBoard(boardSeq);
