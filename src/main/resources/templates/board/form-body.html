@@ -75,20 +75,24 @@
 			
 			var jsonValue = JSON.stringify(data);
 			
-			console.log('jsonValue', jsonValue);			
-			$.ajax({
-				url: '/board/save-body',
-				type: 'post',
-				data: jsonValue,
-				contentType: 'application/json',
-				success: function(boardSeq) {
-					location.href = '/board/' + boardSeq;
-				},
-				error: function(data) {
-					console.log(data);
-					alert('오류가 발생했습니다.');
-				}
-			});
+			console.log('jsonValue', jsonValue);		
+			try {
+				$.ajax({
+					url: '/board/save-body',
+					type: 'post',
+					data: jsonValue,
+					contentType: 'application/json',
+					success: function(boardSeq) {
+						location.href = '/board/' + boardSeq;
+					},
+					error: function(data) {
+						console.log(data);
+						alert('오류가 발생했습니다.');
+					}
+				});
+			} catch (e) {
+				console.error(e);
+			}
 			// 페이지가 전환되지 않게 방지
 			return false;
 		});

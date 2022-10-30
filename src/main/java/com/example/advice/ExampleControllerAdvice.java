@@ -1,19 +1,27 @@
 package com.example.advice;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import com.example.exception.DefaultException;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @ControllerAdvice
 @Slf4j
+@RequiredArgsConstructor
 public class ExampleControllerAdvice {
 
+	private final MappingJackson2JsonView jsonView;
+	
 	/**
 	 * Exception 발생에 예외처리
 	 * @param e
@@ -31,10 +39,22 @@ public class ExampleControllerAdvice {
 	 * @return
 	 */
 	@ExceptionHandler(BindException.class)
-	public ModelAndView handleBindException(BindException e) {
+	public ModelAndView handleBindException(BindException e, 
+			HttpServletRequest request) {
 		log.error("handleBindException", e);
-		ModelAndView view = new ModelAndView("/error/message.html");
 		FieldError fieldError = e.getFieldError();
+		String requested = request.getHeader("X-Requested-With");
+		// 응답값을 json 포맷으로 처리
+		if (requested != null && requested.equals("XMLHttpRequest")) {
+			log.info("해당 조건에는 json으로 응답처리");
+			ModelAndView view = new ModelAndView(jsonView);
+			// 응답을 오류 상태로
+			view.setStatus(HttpStatus.BAD_REQUEST);
+			view.addObject("message", fieldError.getDefaultMessage());
+			return view;
+		}
+		
+		ModelAndView view = new ModelAndView("/error/message.html");
 		view.addObject("message", fieldError.getDefaultMessage());		
 		return view;
 	}

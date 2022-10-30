@@ -10,5 +10,7 @@ public class Member {
 	private String password;
 	private String nickname;
 	private String joinDate;
+	private String profileImagePath;
+	private String profileImageName;
 	
 }

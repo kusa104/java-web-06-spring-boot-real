@@ -8,4 +8,5 @@ public class ValidationSteps {
 	public interface Step4 {}
 	public interface Step5 {}
 	public interface Step6 {}
+	public interface Step7 {}
 }

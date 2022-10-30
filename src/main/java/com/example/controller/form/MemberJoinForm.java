@@ -6,7 +6,9 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.example.validation.NotEmptyFile;
 import com.example.validation.ValidationSteps;
 
 import lombok.Data;
@@ -19,6 +21,8 @@ import lombok.Data;
 	ValidationSteps.Step3.class,
 	ValidationSteps.Step4.class,
 	ValidationSteps.Step5.class,
+	ValidationSteps.Step6.class,
+	ValidationSteps.Step7.class,
 })
 public class MemberJoinForm {
 	
@@ -33,4 +37,7 @@ public class MemberJoinForm {
 	@NotEmpty(groups = ValidationSteps.Step5.class, message = "{MemberSaveForm.nickname.notEmpty}")
 	@Length(groups = ValidationSteps.Step6.class, min = 2, max = 10, message = "{MemberSaveForm.nickname.length}")
 	private String nickname;
+	
+	@NotEmptyFile(groups = ValidationSteps.Step7.class, message = "{MemberSaveForm.profileImage.notEmpty}")
+	private MultipartFile profileImage;
 }

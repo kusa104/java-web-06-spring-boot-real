@@ -14,6 +14,14 @@
 		WHERE ACCOUNT = #{account}
 	</select>
 	
+	<!-- 회원 계정 조회 -->
+	<select id="selectMemberAccount" parameterType="String" 
+		resultType="com.example.domain.Member">
+		SELECT MEMBER_SEQ, ACCOUNT, PASSWORD, NICKNAME
+		FROM T_MEMBER
+		WHERE ACCOUNT = #{account}
+	</select>
+	
 	<insert id="insertMember" 
 		parameterType="com.example.domain.Member">
 		INSERT INTO T_MEMBER
@@ -21,6 +29,8 @@
 			ACCOUNT,
 			PASSWORD,
 			NICKNAME,
+			PROFILE_IMAGE_PATH,
+			PROFILE_IMAGE_NAME,
 			JOIN_DATE
 		)
 		VALUES
@@ -28,6 +38,8 @@
 			#{account},
 			#{password},
 			#{nickname},
+			#{profileImagePath},
+			#{profileImageName},
 			NOW()		
 		)
 	</insert>

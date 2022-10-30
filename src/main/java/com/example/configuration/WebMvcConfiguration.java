@@ -7,6 +7,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 @Configuration
 public class WebMvcConfiguration implements WebMvcConfigurer {
@@ -34,6 +35,11 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 			factory = new LocalValidatorFactoryBean();
 		factory.setValidationMessageSource(messageSource());
 		return factory;
+	}
+	
+	@Bean
+	public MappingJackson2JsonView jsonView() {
+		return new MappingJackson2JsonView();
 	}
 	
 }
