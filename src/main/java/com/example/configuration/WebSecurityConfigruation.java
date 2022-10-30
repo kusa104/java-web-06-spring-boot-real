@@ -22,6 +22,7 @@ public class WebSecurityConfigruation {
 			.anyRequest().hasRole("USER").and()
 			//.csrf().disable()
 			.formLogin()
+			.defaultSuccessUrl("/home")
 			.permitAll();
 		return http.build();
 	}

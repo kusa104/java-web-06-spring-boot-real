@@ -23,6 +23,8 @@
 	<script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
 	<script th:inline="javascript">
 	var boardSeq = [[${board.boardSeq}]];
+	var csrfName = [[${_csrf.parameterName}]];
+	var csrfToken = [[${_csrf.token}]];
 	function handleDelete() {
 		if (confirm('정말 삭제하시겠습니까?')) {
 			$.ajax({
@@ -30,7 +32,8 @@
 				type: 'post',
 				// 파라메터
 				data: {
-					boardSeq: boardSeq
+					boardSeq: boardSeq,
+					[csrfName]: csrfToken
 				},
 				// 성공콜백
 				success: function(data) {

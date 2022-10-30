@@ -11,5 +11,6 @@ public class Board {
 	private String contents;
 	private String regDate;
 	private String userName; // 회원 이름
+	private int memberSeq;
 	
 }

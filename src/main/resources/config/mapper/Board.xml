@@ -15,7 +15,7 @@
 	<!-- 게시물 상세 쿼리 1:1 데이터 조회 -->
 	<select id="selectBoard" parameterType="int" resultType="com.example.mapper.Board">
 		SELECT 
-			BOARD_SEQ, BOARD_TYPE, TITLE, CONTENTS, USER_NAME, REG_DATE 
+			BOARD_SEQ, BOARD_TYPE, TITLE, CONTENTS, USER_NAME, MEMBER_SEQ, REG_DATE 
 		FROM T_BOARD
 		WHERE BOARD_SEQ = #{boardSeq}
 	</select>	
@@ -30,6 +30,7 @@
 			TITLE,
 			CONTENTS,
 			USER_NAME,
+			MEMBER_SEQ,
 			REG_DATE		
 		)
 		VALUES
@@ -38,6 +39,7 @@
 			#{title},
 			#{contents},
 			#{userName},
+			#{memberSeq},
 			NOW()	
 		)
 	</insert>

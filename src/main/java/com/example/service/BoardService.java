@@ -2,11 +2,13 @@ package com.example.service;
 
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.example.controller.form.BoardSaveForm;
 import com.example.mapper.Board;
 import com.example.mapper.BoardMapper;
+import com.example.security.SecurityUserDetails;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,12 +30,26 @@ public class BoardService {
 		return boardMapper.selectBoard(boardSeq);
 	}
 	
-	public void insertBoard(BoardSaveForm form) {
-		boardMapper.insertBoard(form);
+	public void save(BoardSaveForm form, Authentication authentication) {
+		SecurityUserDetails details = (SecurityUserDetails) 
+			authentication.getPrincipal();
+		Board board = new Board();
+		board.setBoardSeq(form.getBoardSeq());	
+		board.setBoardType(form.getBoardType());
+		board.setTitle(form.getTitle());
+		board.setContents(form.getContents());
+		board.setUserName(details.getNickname());
+		board.setMemberSeq(details.getMemberSeq());
+		boardMapper.insertBoard(board);
 	}
 	
-	public void updateBoard(BoardSaveForm form) {
-		boardMapper.updateBoard(form);
+	public void update(BoardSaveForm form) {
+		Board board = new Board();
+		board.setBoardSeq(form.getBoardSeq());	
+		board.setBoardType(form.getBoardType());
+		board.setTitle(form.getTitle());
+		board.setContents(form.getContents());
+		boardMapper.updateBoard(board);
 	}
 	
 	public void deleteBoard(int boardSeq) {

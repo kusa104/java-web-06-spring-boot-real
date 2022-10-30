@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.Assert;
@@ -91,33 +92,35 @@ public class BoardController {
 	@GetMapping("/edit/{boardSeq}")
 	public String edit(Model model, @PathVariable int boardSeq) {
 		// 데이터 조회
-		Board board = boardService.selectBoard(boardSeq);
-		// board가 null일 경우 에러 메세지 출력
-		Assert.notNull(board, "게시글 정보가 없습니다.");
-		model.addAttribute("board", board);
+		model.addAttribute("board", 
+			boardService.selectBoard(boardSeq));
 		return "/board/form";
 	}
 	
 	/**
-	 * 게시물 등록/저장 요철 처리
-	 * @param model
+	 * 등록 처리
+	 * @param form
 	 * @return
 	 */
 	@PostMapping("/save")
-	public String save(@Validated BoardSaveForm form) {
-		Board selectBoard = null;
-		// 게시글 수정으로 요청인경우
-		if (form.getBoardSeq() > 0) {
-			selectBoard = boardService.selectBoard(form.getBoardSeq());
-		}
-		// 수정인 경우 업데이트
-		if (selectBoard != null) {
-			boardService.updateBoard(form);
-		} else {
-			boardService.insertBoard(form);
-		}
-		// 게시물 목록 화면으로 URL 리다렉트
+	public String save(@Validated BoardSaveForm form,
+		Authentication authentication) {
+		boardService.save(form, authentication);
+		// 목록 화면으로 이동
 		return "redirect:/board";
+	}
+	
+	
+	/**
+	 * 업데이트 처리
+	 * @param form
+	 * @return
+	 */
+	@PostMapping("/update")
+	public String update(@Validated BoardSaveForm form) {
+		boardService.update(form);
+		// 상세화면으로 이동
+		return "redirect:/board/" + form.getBoardSeq();
 	}
 	
 	/**
@@ -127,7 +130,8 @@ public class BoardController {
 	 */
 	@PostMapping("/save-body")
 	@ResponseBody
-	public HttpEntity<Integer> saveBody(@Validated @RequestBody BoardSaveForm form) {
+	public HttpEntity<Integer> saveBody(@Validated @RequestBody BoardSaveForm form,
+			Authentication authentication) {
 		Board selectBoard = null;
 		// 게시글 수정으로 요청인경우
 		if (form.getBoardSeq() > 0) {
@@ -135,9 +139,9 @@ public class BoardController {
 		}
 		// 수정인 경우 업데이트
 		if (selectBoard != null) {
-			boardService.updateBoard(form);
+			boardService.update(form);
 		} else {
-			boardService.insertBoard(form);
+			boardService.save(form, authentication);
 		}
 		// 게시물 목록 화면으로 URL 리다렉트
 		return new ResponseEntity<Integer>(form.getBoardSeq(), HttpStatus.OK);
@@ -146,12 +150,8 @@ public class BoardController {
 	@PostMapping("/delete")
 	@ResponseBody
 	public HttpEntity<Boolean> delete(@RequestParam int boardSeq) {
-		// 데이터 조회
-		Board board = boardService.selectBoard(boardSeq);
-		// board가 null일 경우 에러 메세지 출력
-		Assert.notNull(board, "게시글 정보가 없습니다.");
 		boardService.deleteBoard(boardSeq);
-		return new ResponseEntity<Boolean>(HttpStatus.OK);
+		return ResponseEntity.ok().build();
 	}
 	
 }
