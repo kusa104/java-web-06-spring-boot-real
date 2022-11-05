@@ -7,8 +7,11 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+
+import com.example.interceptor.DefaultHandleInterceptor;
 
 @Configuration
 @EnableAspectJAutoProxy
@@ -42,6 +45,13 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 	@Bean
 	public MappingJackson2JsonView jsonView() {
 		return new MappingJackson2JsonView();
+	}
+	
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		registry
+			.addInterceptor(new DefaultHandleInterceptor())
+			.addPathPatterns("/**");
 	}
 	
 }

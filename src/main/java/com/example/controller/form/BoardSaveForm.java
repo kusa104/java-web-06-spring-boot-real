@@ -2,9 +2,11 @@ package com.example.controller.form;
 
 import javax.validation.GroupSequence;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.example.domain.BoardType;
 import com.example.validation.ValidationSteps;
 
 import lombok.Data;
@@ -22,8 +24,8 @@ public class BoardSaveForm {
 	
 	private int boardSeq;
 	
-	@NotEmpty(groups = ValidationSteps.Step4.class, message = "{BoardSaveForm.boardType.notEmpty}")
-	private String boardType;
+	@NotNull(groups = ValidationSteps.Step4.class, message = "{BoardSaveForm.boardType.notEmpty}")
+	private BoardType boardType;
 	
 	@NotEmpty(groups = ValidationSteps.Step2.class, message = "{BoardSaveForm.title.notEmpty}")
 	@Length(

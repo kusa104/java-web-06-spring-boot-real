@@ -16,7 +16,23 @@
 	<th:block th:replace="fragments/header :: defaultHeader"></th:block>
 	<!-- 페이지 -->
 	<div class="container  mt-5">
-		<th:block layout:fragment="content"></th:block>
+		<div class="row">
+			<div class="col-4 col-md-2">
+				<div class="list-group">
+					<th:block th:each="type : ${boardTypes}">
+					<a class="list-group-item" th:classappend="${type == boardType ? 'active' : ''}"
+						th:href="@{/board/{boardType}(boardType=${type.name()})}" 
+						th:text="${type.label()}"
+					>
+						커뮤니티
+					</a>
+					</th:block>
+				</div>
+			</div>
+			<div class="col-md-10">
+				<th:block layout:fragment="content"></th:block>
+			</div>
+		</div>
 	</div>
 	<!-- footer -->
 	<th:block th:replace="fragments/footer :: defaultFooter"></th:block>

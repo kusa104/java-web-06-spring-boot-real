@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import com.example.controller.form.BoardSaveForm;
-import com.example.mapper.Board;
+import com.example.domain.Board;
 import com.example.security.SecurityUserDetails;
 import com.example.service.BoardService;
 

@@ -1,4 +1,4 @@
-package com.example.mapper;
+package com.example.domain;
 
 import lombok.Data;
 
@@ -6,7 +6,7 @@ import lombok.Data;
 public class Board {
 	
 	private int boardSeq;
-	private String boardType;
+	private BoardType boardType;
 	private String title;
 	private String contents;
 	private String regDate;

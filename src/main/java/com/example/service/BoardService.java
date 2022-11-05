@@ -6,7 +6,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.example.controller.form.BoardSaveForm;
-import com.example.mapper.Board;
+import com.example.domain.Board;
+import com.example.domain.BoardType;
 import com.example.mapper.BoardMapper;
 import com.example.security.SecurityUserDetails;
 
@@ -22,15 +23,15 @@ public class BoardService {
 	 * 게시물 목록 조회 후 리턴
 	 * @return
 	 */
-	public List<Board> selectBoardList() {
-		return boardMapper.selectBoardList();
+	public List<Board> selectBoardList(BoardType boardType, String query) {
+		return boardMapper.selectBoardList(boardType, query);
 	}
 	
 	public Board selectBoard(int boardSeq) {
 		return boardMapper.selectBoard(boardSeq);
 	}
 	
-	public void save(BoardSaveForm form, Authentication authentication) {
+	public Board save(BoardSaveForm form, Authentication authentication) {
 		SecurityUserDetails details = (SecurityUserDetails) 
 			authentication.getPrincipal();
 		Board board = new Board();
@@ -41,6 +42,7 @@ public class BoardService {
 		board.setUserName(details.getNickname());
 		board.setMemberSeq(details.getMemberSeq());
 		boardMapper.insertBoard(board);
+		return board;
 	}
 	
 	public void update(BoardSaveForm form) {

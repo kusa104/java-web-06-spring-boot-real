@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.annotation.RequestConfig;
 import com.example.controller.form.BoardSaveForm;
-import com.example.mapper.Board;
+import com.example.domain.Board;
+import com.example.domain.BoardType;
 import com.example.service.BoardService;
 
 import lombok.RequiredArgsConstructor;
@@ -37,12 +39,16 @@ public class BoardController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping
-	public String list(Model model) {
+	@GetMapping("/{boardType}")
+	@RequestConfig(menu = "BOARD")
+	public String list(Model model, @PathVariable BoardType boardType, 
+			@RequestParam(required = false) String query) {
 		// 게시물 목록 조회 후 model에 boardList key로 저장
-		model.addAttribute("boardList", boardService.selectBoardList());
+		model.addAttribute("boardList", boardService.selectBoardList(boardType, query));
+		model.addAttribute("boardType", boardType);
+		model.addAttribute("boardTypes", BoardType.values());
 		// jsp를 호출
-		return "/board/list";
+		return "board/list";
 	}
 	
 	/**
@@ -50,15 +56,19 @@ public class BoardController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/{boardSeq}")
-	public String form(Model model, @PathVariable int boardSeq) {
-		// 게시물 조회
+	@GetMapping("/{boardType}/{boardSeq}")
+	@RequestConfig(menu = "BOARD")
+	public String detail(Model model, @PathVariable BoardType boardType,
+			@PathVariable(required = true) int boardSeq) {
+		logger.debug("detail");
 		Board board = boardService.selectBoard(boardSeq);
-		// board가 null일 경우 에러 메세지 출력
 		Assert.notNull(board, "게시글 정보가 없습니다.");
-		// detail.html에서 board를 사용하기 위해 model에 넣는다.
+		// 게시물 상세정보 set
 		model.addAttribute("board", board);
-		return "/board/detail";
+		model.addAttribute("boardType", boardType);
+		model.addAttribute("boardTypes", BoardType.values());
+		// jsp를 호출
+		return "board/detail";
 	}
 	
 	/**
@@ -66,9 +76,12 @@ public class BoardController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/form")
-	public String form(Model model) {
-		return "/board/form";
+	@GetMapping("/{boardType}/form")
+	@RequestConfig(menu = "BOARD")
+	public String form(Model model, @PathVariable BoardType boardType) {
+		model.addAttribute("boardType", boardType);
+		model.addAttribute("boardTypes", BoardType.values());
+		return "board/form";
 	}
 	
 	/**
@@ -77,10 +90,10 @@ public class BoardController {
 	 * @return
 	 */
 	@GetMapping("/form-body")
+	@RequestConfig(menu = "BOARD")
 	public String formBody(Model model) {
-		return "/board/form-body";
+		return "board/form-body";
 	}
-	
 	
 	
 	/**
@@ -89,11 +102,15 @@ public class BoardController {
 	 * @param boardSeq
 	 * @return
 	 */
-	@GetMapping("/edit/{boardSeq}")
-	public String edit(Model model, @PathVariable int boardSeq) {
-		// 데이터 조회
-		model.addAttribute("board", 
-			boardService.selectBoard(boardSeq));
+	@GetMapping("/{boardType}/edit/{boardSeq}")
+	@RequestConfig(menu = "BOARD")
+	public String edit(Model model, @PathVariable BoardType boardType, 
+			@PathVariable int boardSeq) {
+		// 게시물 상세정보 set
+		model.addAttribute("board", boardService.selectBoard(boardSeq));
+		model.addAttribute("boardType", boardType);
+		model.addAttribute("boardTypes", BoardType.values());
+		// jsp를 호출
 		return "/board/form";
 	}
 	
@@ -103,13 +120,13 @@ public class BoardController {
 	 * @return
 	 */
 	@PostMapping("/save")
+	@RequestConfig(menu = "BOARD")
 	public String save(@Validated BoardSaveForm form,
 		Authentication authentication) {
-		boardService.save(form, authentication);
+		Board board = boardService.save(form, authentication);
 		// 목록 화면으로 이동
-		return "redirect:/board";
+		return "redirect:/board/" + form.getBoardType().name() + "/" + board.getBoardSeq();
 	}
-	
 	
 	/**
 	 * 업데이트 처리
@@ -117,10 +134,11 @@ public class BoardController {
 	 * @return
 	 */
 	@PostMapping("/update")
+	@RequestConfig(menu = "BOARD")
 	public String update(@Validated BoardSaveForm form) {
 		boardService.update(form);
 		// 상세화면으로 이동
-		return "redirect:/board/" + form.getBoardSeq();
+		return "redirect:/board/" + form.getBoardType().name() + "/" + form.getBoardSeq();
 	}
 	
 	/**
@@ -129,6 +147,7 @@ public class BoardController {
 	 * @return
 	 */
 	@PostMapping("/save-body")
+	@RequestConfig(menu = "BOARD")
 	@ResponseBody
 	public HttpEntity<Integer> saveBody(@Validated @RequestBody BoardSaveForm form,
 			Authentication authentication) {
@@ -148,6 +167,7 @@ public class BoardController {
 	}
 	
 	@PostMapping("/delete")
+	@RequestConfig(menu = "BOARD")
 	@ResponseBody
 	public HttpEntity<Boolean> delete(@RequestParam int boardSeq) {
 		boardService.deleteBoard(boardSeq);

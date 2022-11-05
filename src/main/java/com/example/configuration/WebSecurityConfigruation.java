@@ -16,7 +16,7 @@ public class WebSecurityConfigruation {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
 			// 해당 url 패턴은 로그인 권한없어도 접근되게
-			.antMatchers("/public/**", "/member/form", "/member/join**")
+			.antMatchers("/public/**", "/member/form", "/member/join**", "/", "/home")
 			.permitAll()
 			// 나머지 요청은 로그인을 해야 접근되게
 			.anyRequest().hasRole("USER").and()

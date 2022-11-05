@@ -28,9 +28,21 @@ public class ExampleControllerAdvice {
 	 * @return
 	 */
 	@ExceptionHandler(Exception.class)
-	public ModelAndView handleException(Exception e) {
+	public ModelAndView handleException(Exception e, HttpServletRequest request) {
 		log.error("handleException", e);
-		return handle(e);
+		String requested = request.getHeader("X-Requested-With");
+		// 응답값을 json 포맷으로 처리
+		if (requested != null && requested.equals("XMLHttpRequest")) {
+			log.info("해당 조건에는 json으로 응답처리");
+			ModelAndView view = new ModelAndView(jsonView);
+			// 응답을 오류 상태로
+			view.setStatus(HttpStatus.BAD_REQUEST);
+			view.addObject("message", e.getMessage());
+			return view;
+		}
+		ModelAndView view = new ModelAndView("/error/message.html");
+		view.addObject("message", e.getMessage());		
+		return view;
 	}
 	
 	/**
